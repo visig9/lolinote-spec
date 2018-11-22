@@ -1,8 +1,8 @@
 # Lolinote Specification
 
-The *Lolinote* is a filesystem-base note-taking data structure. Its philosophy was aimed to extremely simple and intuitive, and let all of the daily usages can be done by human's hands and without dedicated program reasonably. But, in the same time, still allow external programs to enhancing its usability.
+The *Lolinote* is a filesystem-base note-taking data structure. Its philosophy was aimed to extremely simple and intuitive, and let all of the daily usages can be done by human's hands and without dedicated program reasonably. But, in the same time, still allow external programs to enhance its usability.
 
-This specification defined the data structure of *Lolinote 2.0* to allow processing by any programs.
+This specification defined the data structure of Lolinote 2.0 to allow processing by any programs.
 
 
 

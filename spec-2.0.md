@@ -1,4 +1,4 @@
-# Specification of Lolinote 2.0-draft
+# Specification of Lolinote 2.0-draft-2
 
 > This specification still in draft stage, it maybe minor tweak to fix typo or extend some part in future.
 
@@ -6,9 +6,9 @@
 
 ## Introduction
 
-The *Lolinote* is a filesystem-base note-taking data structure. Its philosophy was aimed to extremely simple and intuitive, and let all of the daily usages can be done by human's hands and without dedicated program reasonably. But, in the same time, still allow external programs to enhancing its usability.
+The *Lolinote* is a filesystem-base note-taking data structure. Its philosophy was aimed to extremely simple and intuitive, and let all of the daily usages can be done by human's hands and without dedicated program reasonably. But, in the same time, still allow external programs to enhance its usability.
 
-This specification defined the data structure of *Lolinote 2.0* to allow processing by any programs.
+This specification defined the data structure of Lolinote 2.0 to allow processing by any programs.
 
 
 
@@ -18,9 +18,9 @@ This specification defined the data structure of *Lolinote 2.0* to allow process
 - *Instance Root*: A specific directory contain a whole *Lolinote Instance*.
 - *Instance Configuration Folder*: A specific directory named `.lolinote` under the *Lolinote Instance Root*.
 - *Note*: A basic unit in a *Lolinote Instance*. Each notes are independent with the others.
-    - *Simple Note*: Basic type of note (in file form).
-    - *Complex Note*: Advanced type of note (in directory form), support attachments.
-- *Noise*: The filesystem entries existing in Lolinote Instance which should be ignored and keep it in-place.
+    - *Simple Note*: Basic type of *Note* (in file form).
+    - *Complex Note*: Advanced type of *Note* (in directory form), support attachments.
+- *Noise*: Some filesystem entries exist in Lolinote Instance but should be ignored and keep it in-place.
 - *Filename Extension*: the portion of filename after the last `.`.
 - *Main Filename*: the portion of filename before the last `.`.
 
@@ -45,9 +45,9 @@ any-path-in-filesystem/
 
 ### Lolinote Instance
 
-A *Lolinote Instance* begin with a simple directory (called *Instance Root*) in any locations of a filesystem. And the *Instance Root* must have a sub-directory which named `.lolinote` (called *Instance Configuration Folder*).
+A *Lolinote Instance* begin with a directory (called *Instance Root*) in any locations of a filesystem. A *Instance Root* must have a sub-directory which was named `.lolinote` (called *Instance Configuration Folder*).
 
-On the other hand, any directories which contain a folder named `.lolinote` directly should be considered as a independent *Lolinote Instance*.
+In other words, any directories which contain a folder named `.lolinote` directly should be considered as a independent *Lolinote Instance*.
 
 An example:
 
@@ -64,8 +64,6 @@ An example:
 
 A *Lolinote Instance* including all of the recursive sub-directories and files.
 
-Until the recursive mining reach a "leaf" structure. *Lolinote Instance*'s structure tree not including the things in the leaf structure, only about the entry.
-
 
 
 ### Noise
@@ -74,9 +72,9 @@ Until the recursive mining reach a "leaf" structure. *Lolinote Instance*'s struc
 
 1. Any files without *Filename Extension*.
 2. Any files or directories start with `.`.
-3. Any files or directories under a *Noise* element.
-4. Any other *Lolinote Instance*.
-5. Any directories contain multiple files which *Main Filenames* is `index`.
+3. Any other *Lolinote Instance*.
+4. Any directories contain multiple files which *Main Filenames* is `index`.
+5. Any files or directories under a *Noise* element.
 
 An example:
 
@@ -84,17 +82,17 @@ An example:
 /home/alice/
     cooking-notes/
         .lolinote/
-        .git/                       # Noise: start with `.` (2)
-        other-note-instance/        # Noise: Other Lolinote Instance (4)
-            .lolinote/
         MakeFile                    # Noise: without filename extension (1)
+        .git/                       # Noise: start with `.` (2)
+        other-note-instance/        # Noise: Other Lolinote Instance (3)
+            .lolinote/
 ```
 
 
 
 ### Note
 
-No matter *Simple Note* or *Complex Note*, each *Notes* in *Lolinote Instance* have the following data:
+Lolinote contain two type of Note: *Simple Note* and *Complex Note*. No matter which type of *Note*, each *Notes* have the following data fields:
 
 - `title`
 - `content_type`
@@ -104,7 +102,7 @@ No matter *Simple Note* or *Complex Note*, each *Notes* in *Lolinote Instance* h
 
 #### Simple Note
 
-A *Simple Note* is just a simple file. The *Main Filename* is its `title`, the *Filename Extension* is its `content_type`, the data store in the file is its `content`.
+A *Simple Note* is just a simple file. The *Main Filename* is its `title`, the *Filename Extension* is its `content_type`, the data store in this file is its `content`.
 
 Here is a example:
 
@@ -122,7 +120,7 @@ lolinote-root-folder/
     city-map.jpg            # This is a valid note. title: "city-map", content_type: "jpg"
 ```
 
-The another restriction is *Simple Note* not accept the *Main Filename* use the keyword `index`. This is a reserve word for *Complex Note*. See below.
+Here is a restriction: *Simple Note* not allow the *Main Filename* use the keyword `index`. This is a reserve word for *Complex Note*. See below.
 
 
 
@@ -146,9 +144,9 @@ lolinote-root-folder/
         MakeFile        # attachment
 ```
 
-A *Note* is a "leaf" structure in *Lolinote Instance* tree. Which mean: any *Notes* will not contain another *Note*. The `1.jpg` and `MakeFile` in above example are not a *Note* or a *Noise* directly control by this *Lolinote Instance*, they just a attachment -- a part of this *Complex Note*.
+A *Note* is a "leaf" structure in *Lolinote Instance* tree. Which mean: any *Notes* will not contain another *Note*. The `1.jpg` and `MakeFile` in above example are not a *Note* or a *Noise* reigned by this *Lolinote Instance*, they just a attachment -- a part of this *Complex Note*.
 
-For avoid confuse, if any directory contain more than one *Main Filename* called `index`, this directory not a *Complex Note*, just a *Noise*. See the definition of *Noise*.
+Finally, if any directory contain more than one file which *Main Filename* is `index`, this directory not a *Complex Note*, just a *Noise*. See the definition of *Noise*.
 
 
 
