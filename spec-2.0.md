@@ -1,4 +1,4 @@
-# Specification of Lolinote 2.0-draft-2
+# Specification of Lolinote 2.0-draft-3
 
 > This specification still in draft stage, it maybe minor tweak to fix typo or extend some part in future.
 
@@ -14,22 +14,22 @@ This specification defined the data structure of Lolinote 2.0 to allow processin
 
 ## Basic Terms & Concepts
 
-- *Lolinote Instance*: The largest unit of Lolinote specification.
-- *Instance Root*: A specific directory contain a whole *Lolinote Instance*.
-- *Instance Configuration Folder*: A specific directory named `.lolinote` under the *Lolinote Instance Root*.
-- *Note*: A basic unit in a *Lolinote Instance*. Each notes are independent with the others.
+- *Lolinote Repository*: The largest unit of Lolinote specification.
+- *Repository Root*: A specific directory contain a whole *Lolinote Repository*.
+- *Repository Configuration Directory*: A specific directory named `.lolinote` under the *Lolinote Repository Root*.
+- *Note*: A basic unit in a *Lolinote Repository*. Each notes are independent with the others.
     - *Simple Note*: Basic type of *Note* (in file form).
     - *Complex Note*: Advanced type of *Note* (in directory form), support attachments.
-- *Noise*: Some filesystem entries exist in Lolinote Instance but should be ignored and keep it in-place.
-- *Filename Extension*: the portion of filename after the last `.`.
-- *Main Filename*: the portion of filename before the last `.`.
+- *Noise*: Some filesystem entries exist in Lolinote Repository but should be ignored and keep it in-place.
+- *Filename Extension*: the portion of filename after the last `.`, not include the last `.` itself.
+- *Main Filename*: the portion of filename before the last `.`, not include the last `.` itself.
 
-Here is a example of a *Lolinote Instance*:
+Here is a example of a *Lolinote Repository*:
 
 ```
 any-path-in-filesystem/
-    lolinote-root-folder/           # Instance Root
-        .lolinote/                  # Instance Configuration Folder
+    lolinote-root-folder/           # Repository Root
+        .lolinote/                  # Repository Configuration Directory
         2017-car-review.txt         # a Simple Note - filename extension: txt, main filename: 2017-car-review
         boardgame-story/            # a Complex Note
             index.html
@@ -43,11 +43,11 @@ any-path-in-filesystem/
 
 ## Detail of Definitions
 
-### Lolinote Instance
+### Lolinote Repository
 
-A *Lolinote Instance* begin with a directory (called *Instance Root*) in any locations of a filesystem. A *Instance Root* must have a sub-directory which was named `.lolinote` (called *Instance Configuration Folder*).
+A *Lolinote Repository* begin with a directory (called *Repository Root*) in any locations of a filesystem. A *Repository Root* must have a sub-directory which was named `.lolinote` (called *Repository Configuration Directory*).
 
-In other words, any directories which contain a folder named `.lolinote` directly should be considered as a independent *Lolinote Instance*.
+In other words, any directories which contain a folder named `.lolinote` directly should be considered as a independent *Lolinote Repository*.
 
 An example:
 
@@ -62,18 +62,18 @@ An example:
             .lolinote/
 ```
 
-A *Lolinote Instance* including all of the recursive sub-directories and files.
+A *Lolinote Repository* including all of the recursive sub-directories and files.
 
 
 
 ### Noise
 
-*Noise* is somethings which Lolinote program should ignore and keep it in-place in a *Lolinote Instance*. Including:
+*Noise* is somethings which Lolinote program should ignore and keep it in-place in a *Lolinote Repository*. Including:
 
 1. Any files without *Filename Extension*.
 2. Any files or directories start with `.`.
-3. Any other *Lolinote Instance*.
-4. Any directories contain multiple files which *Main Filenames* is `index`.
+3. Any other *Lolinote Repository*.
+4. Any directories contain multiple files which *Main Filename* is `index`.
 5. Any files or directories under a *Noise* element.
 
 An example:
@@ -84,7 +84,7 @@ An example:
         .lolinote/
         MakeFile                    # Noise: without filename extension (1)
         .git/                       # Noise: start with `.` (2)
-        other-note-instance/        # Noise: Other Lolinote Instance (3)
+        other-note-instance/        # Noise: Other Lolinote Repository (3)
             .lolinote/
 ```
 
@@ -144,7 +144,7 @@ lolinote-root-folder/
         MakeFile        # attachment
 ```
 
-A *Note* is a "leaf" structure in *Lolinote Instance* tree. Which mean: any *Notes* will not contain another *Note*. The `1.jpg` and `MakeFile` in above example are not a *Note* or a *Noise* reigned by this *Lolinote Instance*, they just a attachment -- a part of this *Complex Note*.
+A *Note* is a "leaf" structure in *Lolinote Repository* tree. Which mean: any *Notes* will not contain another *Note*. The `1.jpg` and `MakeFile` in above example are not a *Note* or a *Noise* reigned by this *Lolinote Repository*, they just a attachment -- a part of this *Complex Note*.
 
 Finally, if any directory contain more than one file which *Main Filename* is `index`, this directory not a *Complex Note*, just a *Noise*. See the definition of *Noise*.
 
@@ -156,7 +156,7 @@ Every filesystem entries in the same directory should following the ASCII encodi
 
 If two filename has the same ASCII string order, the ordering among them are undefined.
 
-Program can using more methods to generate or tweak the ordering. This protocol are only defined the manual order assigned by a Lolinote Instance maintainer.
+Program can using more methods to generate or tweak the ordering. This protocol are only defined the manual order assigned by a *Lolinote Repository* maintainer.
 
 Here is a example:
 
@@ -194,9 +194,9 @@ The `diary` directory has 4 entries, the manual ordering is:
 
 
 
-## Instance Configuration Folder
+## Repository Configuration Directory
 
-The *Instance Configuration Folder* (`.lolinote/`) can be empty, or used to store any lolinote's program related data. Those program related data should only be saved under a sub-directory named with the "program name". For example:
+The *Repository Configuration Directory* (`.lolinote/`) can be empty, or used to store any lolinote's program related data. Those program related data should only be saved under a sub-directory named with the "program name". For example:
 
 ```
 lolinote-root-folder/
