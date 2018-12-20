@@ -1,6 +1,6 @@
-# Specification of Lolinote 2.0-draft-3
+# Specification of Lolinote 2.0-draft-4
 
-> This specification still in draft stage, it maybe minor tweak to fix typo or extend some part in future.
+> This specification still in draft stage, it maybe minor tweak to fix typo or clarify some part in future.
 
 
 
@@ -30,13 +30,13 @@ Here is a example of a *Lolinote Repository*:
 any-path-in-filesystem/
     lolinote-root-folder/           # Repository Root
         .lolinote/                  # Repository Configuration Directory
-        2017-car-review.txt         # a Simple Note - filename extension: txt, main filename: 2017-car-review
+        2017-car-review.txt         # a Simple Note - Filename Extension: txt, Main Filename: 2017-car-review
         boardgame-story/            # a Complex Note
             index.html
             1.jpg
         .git/                       # Noise
         .gitignore                  # Noise
-        MakeFile                    # Noise
+        Makefile                    # Noise
 ```
 
 
@@ -53,12 +53,12 @@ An example:
 
 ```
 /home/alice/
-    cooking-notes/          # the root directory of a lolinote instance
+    cooking-notes/          # The Repository Root of a Lolinote Repository
         .lolinote/
     travels/
-        germany/            # the root directory of another lolinote instance
+        germany/            # The Repository Root of another Lolinote Repository
             .lolinote/
-        french/             # the root directory of yet another lolinote instance
+        french/             # The Repository Root of yet another Lolinote Repository
             .lolinote/
 ```
 
@@ -82,10 +82,14 @@ An example:
 /home/alice/
     cooking-notes/
         .lolinote/
-        MakeFile                    # Noise: without filename extension (1)
+        Makefile                    # Noise: without filename extension (1)
         .git/                       # Noise: start with `.` (2)
-        other-note-instance/        # Noise: Other Lolinote Repository (3)
+        other-notes-repo/           # Noise: Other Lolinote Repository (3)
             .lolinote/
+        fish/                       # Noise: contain two index file (4)
+            index.md
+            index.html
+            fish.jpg                # Noise: under a noise element (5)
 ```
 
 
@@ -141,10 +145,10 @@ lolinote-root-folder/
             1.jpg       # attachment
             2.jpg       # attachment
         music.wav       # attachment
-        MakeFile        # attachment
+        Makefile        # attachment
 ```
 
-A *Note* is a "leaf" structure in *Lolinote Repository* tree. Which mean: any *Notes* will not contain another *Note*. The `1.jpg` and `MakeFile` in above example are not a *Note* or a *Noise* reigned by this *Lolinote Repository*, they just a attachment -- a part of this *Complex Note*.
+A *Note* is a "leaf" structure in *Lolinote Repository* tree. Which mean: any *Notes* will not contain another *Note*. The `1.jpg` and `Makefile` in above example are not a *Note* or a *Noise* reigned by this *Lolinote Repository*, they just a attachment -- a part of this *Complex Note*.
 
 Finally, if any directory contain more than one file which *Main Filename* is `index`, this directory not a *Complex Note*, just a *Noise*. See the definition of *Noise*.
 
@@ -156,7 +160,7 @@ Every filesystem entries in the same directory should following the ASCII encodi
 
 If two filename has the same ASCII string order, the ordering among them are undefined.
 
-Program can using more methods to generate or tweak the ordering. This protocol are only defined the manual order assigned by a *Lolinote Repository* maintainer.
+Program can using more methods to generate or tweak the ordering. This protocol only defined the manual order assigned by a *Lolinote Repository* maintainer.
 
 Here is a example:
 
@@ -188,7 +192,7 @@ The `diary` directory has 4 entries, the manual ordering is:
 ```
 2018-01-12-關於新書.txt     # only consider "2018-01-12-"       "-" == 0x2D in ASCII
 2018-01-12.txt              # consider      "2018-01-12.txt"    "." == 0x2E in ASCII
-2018-01-13/                 # consider      "2018-01-13"
+2018-01-13/
 2018-01-25.md
 ```
 
@@ -196,7 +200,7 @@ The `diary` directory has 4 entries, the manual ordering is:
 
 ## Repository Configuration Directory
 
-The *Repository Configuration Directory* (`.lolinote/`) can be empty, or used to store any lolinote's program related data. Those program related data should only be saved under a sub-directory named with the "program name". For example:
+The *Repository Configuration Directory* (`.lolinote/`) can be empty, or used to store any program related data. Those program related data should only be saved under a sub-directory named with the "program name". For example:
 
 ```
 lolinote-root-folder/
@@ -213,4 +217,4 @@ lolinote-root-folder/
             reverse-index.json
 ```
 
-This specification wan't define what is the "program name". But it should be a human readable name and can easily to use to find the related project.
+This specification wan't define what the "program name" meaning. But it should be human readable and can easily to understand what's the related program.
