@@ -1,4 +1,4 @@
-# Specification of Lolinote 2.0-draft-4
+# Specification of Lolinote 2.0-draft-5
 
 > This specification still in draft stage, it maybe minor tweak to fix typo or clarify some part in future.
 
@@ -101,6 +101,8 @@ Lolinote contain two type of Note: *Simple Note* and *Complex Note*. No matter w
 - `title`
 - `content_type`
 - `content`
+
+Each notes are be consider as independent with the others. Which mean, any moving or deleting operations can done independently. An example is no link should point to the others notes - it will cause link break after moving or deleting.
 
 
 
