@@ -24,3 +24,9 @@ The newest specification of Lolinote is [version 2.0-draft]. If you want to find
 - simplify: Unify the content's filename and title location of a Complex Note. It will simplify programming, more understandable by intuition, and simplify some tedious maintaining.
 - simplify: Re-consider and define which things should be ignoring. Easier for programming.
 - change: configuration directory `.loli/` -> `.lolinote/` for improve the explicitness.
+
+
+
+## Reference
+
+- [Wiki](https://gitlab.com/visig/lolinote-spec/wikis/home)
