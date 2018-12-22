@@ -15,18 +15,8 @@ The newest specification of Lolinote is [version 2.0-draft]. If you want to find
 
 
 
-## Changelog
-
-### 2.0
-
-- enhance: Remove unnecessary restriction to allow the other formats be a note.
-- enhance: Remove the restriction of Complex Note, allow it to using sub-directories to storing their attachments.
-- simplify: Unify the content's filename and title location of a Complex Note. It will simplify programming, more understandable by intuition, and simplify some tedious maintaining.
-- simplify: Re-consider and define which things should be ignoring. Easier for programming.
-- change: configuration directory `.loli/` -> `.lolinote/` for improve the explicitness.
-
-
-
-## Reference
+## Other Informations
 
 - [Wiki](https://gitlab.com/visig/lolinote-spec/wikis/home)
+    - [Motive: Why Lolinote exists?](https://gitlab.com/visig/lolinote-spec/wikis/Motive)
+    - [Limit: What's Lolinote cannot do](https://gitlab.com/visig/lolinote-spec/wikis/Limit)
