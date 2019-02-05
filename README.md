@@ -18,5 +18,3 @@ The newest specification of Lolinote is [version 2.0-draft]. If you want to find
 ## Other Informations
 
 - [Wiki](https://github.com/visig9/lolinote-spec/wiki)
-    - [Motive: Why Lolinote exists?](https://github.com/visig9/lolinote-spec/wiki/Motive)
-    - [Limit: What's Lolinote cannot do](https://github.com/visig9/lolinote-spec/wiki/Limit)
