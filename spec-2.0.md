@@ -1,4 +1,4 @@
-# Specification of Lolinote 2.0-draft-5
+# Specification of Lolinote 2.0-draft-6
 
 > This specification still in draft stage, it maybe minor tweak to fix typo or clarify some part in future.
 
@@ -6,32 +6,32 @@
 
 ## Introduction
 
-The *Lolinote* is a filesystem-base note-taking data structure. Its philosophy was aimed to extremely simple and intuitive, and let all of the daily usages can be done by human's hands and without dedicated program reasonably. But, in the same time, still allow external programs to enhance its usability.
+The *Lolinote* is a filesystem-base note-taking data structure. Its philosophy is aimed to extremely simple and intuitive, and let all of the daily usages can be done by human's hands and without dedicated program reasonably. But in the same time, still allow external programs to enhance its usability.
 
-This specification defined the data structure of Lolinote 2.0 to allow processing by any programs.
+This specification defined the data structure of Lolinote 2.0 to allow processing by whatever programs.
 
 
 
-## Basic Terms & Concepts
+## Terms & Concepts
 
-- *Lolinote Repository*: The largest unit of Lolinote specification.
-- *Repository Root*: A specific directory contain a whole *Lolinote Repository*.
-- *Repository Configuration Directory*: A specific directory named `.lolinote` under the *Lolinote Repository Root*.
-- *Note*: A basic unit in a *Lolinote Repository*. Each notes are independent with the others.
-    - *Simple Note*: Basic type of *Note* (in file form).
-    - *Complex Note*: Advanced type of *Note* (in directory form), support attachments.
-- *Noise*: Some filesystem entries exist in Lolinote Repository but should be ignored and keep it in-place.
-- *Filename Extension*: the portion of filename after the last `.`, not include the last `.` itself.
-- *Main Filename*: the portion of filename before the last `.`, not include the last `.` itself.
+### Repository Structures
 
-Here is a example of a *Lolinote Repository*:
+- *RepositoryRoot*: A directory contain the whole Lolinote Repository
+    - *Noise*: Some filesystem entries in a *Repository* but should be ignored and keep it in-place.
+    - *Node*: Some filesystem entries in a *Repository* and not a *Noise*. Has following sub-type:
+        - *CategoryNode*: A filesystem directory that neighter a *Noise* nor *ComplexNote*.
+        - *Note*: A basic unit in a *Repository*. Each notes are independent with the others.
+            - *SimpleNote*: Basic type of *Note* (in file form).
+            - *ComplexNote*: Advanced type of *Note* (in directory form), support attachments.
+
+Here is a example of *Repository*:
 
 ```
 any-path-in-filesystem/
-    lolinote-root-folder/           # Repository Root
-        .lolinote/                  # Repository Configuration Directory
-        2017-car-review.txt         # a Simple Note - Filename Extension: txt, Main Filename: 2017-car-review
-        boardgame-story/            # a Complex Note
+    lolinote-root-folder/       # RepositoryRoot
+        .lolinote/                  # Noise
+        2017-car-review.txt         # SimpleNote
+        boardgame-story/            # ComplexNote
             index.html
             1.jpg
         .git/                       # Noise
@@ -41,108 +41,106 @@ any-path-in-filesystem/
 
 
 
-## Detail of Definitions
+### Other Terms
 
-### Lolinote Repository
+- *Filename Extension*: the portion of filename after the last `.`, not include the last `.` itself.
+- *Main Filename*: the portion of filename before the last `.`, not include the last `.` itself.
 
-A *Lolinote Repository* begin with a directory (called *Repository Root*) in any locations of a filesystem. A *Repository Root* must have a sub-directory which was named `.lolinote` (called *Repository Configuration Directory*).
 
-In other words, any directories which contain a folder named `.lolinote` directly should be considered as a independent *Lolinote Repository*.
 
-An example:
+## Details
+
+### Repository
+
+A *Repository* is a subset of filesystem, which started from a *RepositoryRoot*, and ended to some leafs of filesystem entry.
+
+A valid *RepositoryRoot* must have a sub-directory which was named as `.lolinote`. If sub-directory `.lolinote` not exists, the directory cannot be considered as a *RepositoryRoot*. The `.lolinote` directory can be empty or store any data for third-party programs that not be defined in this spec.
+
+One *Repository* can only have one *RepositoryRoot*. If multiple potential *RepositoryRoot* nesting each others, Only single one can be used at the same time.
 
 ```
 /home/alice/
-    cooking-notes/          # The Repository Root of a Lolinote Repository
-        .lolinote/
-    travels/
-        germany/            # The Repository Root of another Lolinote Repository
-            .lolinote/
-        french/             # The Repository Root of yet another Lolinote Repository
-            .lolinote/
+    travels/                # potential RepositoryRoot #1 ----+
+        .lolinote/                                            |
+        2019-germany/       # potential RepositoryRoot #2 --+ |
+            .lolinote/                                      | |
+            plan.txt                                      --+ |
+        travel-agencies.txt                               ----+
 ```
 
-A *Lolinote Repository* including all of the recursive sub-directories and files.
+For example, if treat #1 as a *RepositoryRoot* for now, the #2 will just be considered as a normal directory in *Repository* #1 at this time.
 
 
 
 ### Noise
 
-*Noise* is somethings which Lolinote program should ignore and keep it in-place in a *Lolinote Repository*. Including:
+*Noise* is some filesystem entries which semantic-less in a Lolinote *Repository*. It should be ignored and keep it in-place in this filesystem. Here are the conditions of *Noise*:
 
-1. Any files without *Filename Extension*.
-2. Any files or directories start with `.`.
-3. Any other *Lolinote Repository*.
-4. Any directories contain multiple files which *Main Filename* is `index`.
-5. Any files or directories under a *Noise* element.
+1. Files or directories start with `.`. (Core rule 1)
+2. Files without *Filename Extension*. (Core rule 2)
+3. filesystem entries under *Noise* directory. (recursively)
+4. Directories which have more than one file using `index` as those *Main Filename*. (Invalid *ComplexNote*)
 
-An example:
+Example:
 
 ```
 /home/alice/
     cooking-notes/
-        .lolinote/
-        Makefile                    # Noise: without filename extension (1)
-        .git/                       # Noise: start with `.` (2)
-        other-notes-repo/           # Noise: Other Lolinote Repository (3)
-            .lolinote/
-        fish/                       # Noise: contain two index file (4)
+        .lolinote/          # Noise by directory start with `.` (1)
+        .git/               # Noise by directory start with `.` (1)
+            gitrc           # Noise by recursively (3)
+        Makefile            # Noise by file without Filename Extension (2)
+        fish/               # Noise by contain two `index` files (4)
             index.md
             index.html
-            fish.jpg                # Noise: under a noise element (5)
 ```
 
 
 
 ### Note
 
-Lolinote contain two type of Note: *Simple Note* and *Complex Note*. No matter which type of *Note*, each *Notes* have the following data fields:
+Lolinote spec contain two type of *Note*: *SimpleNote* and *ComplexNote*. No matter which type of *Note*, each *Notes* have the following attributes:
 
 - `title`
 - `content_type`
 - `content`
 
-Each notes are be consider as independent with the others. Which mean, any moving or deleting operations can done independently. An example is no link should point to the others notes - it will cause link break after moving or deleting.
+All *Notes* are assumed independently with each others. Which mean, any moving or deleting operations can done independently. An example is no link should point to the others notes - because it will cause some link break after moving or deleting.
 
 
 
-#### Simple Note
+#### SimpleNote
 
-A *Simple Note* is just a simple file. The *Main Filename* is its `title`, the *Filename Extension* is its `content_type`, the data store in this file is its `content`.
+A *SimpleNote* is just a simple file.
 
-Here is a example:
-
-```
-lolinote-root-folder/
-    .lolinote/
-    cooking-recipe.txt      # This is a valid note. title: "cooking-recipe", content_type: "txt"
-```
-
-Lolinote not defined the `content` format of each `content_type`, so, any *Filename Extension* were allowed. The true meaning of those `content_type` may or may not be determined by external program or user themself.
+The *Main Filename* is its `title`, the *Filename Extension* is its `content_type`, and the data store in this file is its `content`.
 
 ```
 lolinote-root-folder/
     .lolinote/
-    city-map.jpg            # This is a valid note. title: "city-map", content_type: "jpg"
+    cooking-recipe.txt      # title: "cooking-recipe", content_type: "txt"
+    city-map.jpg            # title: "city-map", content_type: "jpg"
 ```
 
-Here is a restriction: *Simple Note* not allow the *Main Filename* use the keyword `index`. This is a reserve word for *Complex Note*. See below.
+Lolinote not defined any `content` format of `content_type`, so all *Filename Extension* were allowed. The true meaning of those `content_type` may or may not be determined by external program or user themself.
+
+Restriction: *SimpleNote* not allow *Main Filename* using the keyword `index`. This is a reserved filename for *ComplexNote*. See below.
 
 
 
-#### Complex Note
+#### ComplexNote
 
-A *Complex Note* is a directory, contain a file which *Main Filename* is `index`.
+A *ComplexNote* is a directory, contain one file directly which *Main Filename* is `index`.
 
-The *Complex Note*'s `title` is the directory name, the index's *Filename Extension* is its `content_type`, the data store in the index file is its `content`. Any other files in this directory (and sub-directories) should be considered as the *Attachments* of this *Note*.
+The *ComplexNote*'s `title` is the directory name, the `index`'s *Filename Extension* is its `content_type`, the data store in the `index` file is its `content`. Any other files in this directory (and sub-directories) should be considered as its *Attachments*.
 
-Here is a example of a *Complex Note*:
+Here is a example of a *ComplexNote*:
 
 ```
 lolinote-root-folder/
     .lolinote/
     2013-pc-game/       # A complex note entry, title: "2013-pc-game", content_type: "html"
-        index.html      # index file
+        index.html      # index file (html)
         images/
             1.jpg       # attachment
             2.jpg       # attachment
@@ -150,9 +148,9 @@ lolinote-root-folder/
         Makefile        # attachment
 ```
 
-A *Note* is a "leaf" structure in *Lolinote Repository* tree. Which mean: any *Notes* will not contain another *Note*. The `1.jpg` and `Makefile` in above example are not a *Note* or a *Noise* reigned by this *Lolinote Repository*, they just a attachment -- a part of this *Complex Note*.
+*ComplexNote* is a "leaf" structure in *Repository* tree. Which mean: any *ComplexNote* will not contain another *Note*. The `1.jpg` and `Makefile` in above example are not a *Note* nor a *Noise* reigned by this *Repository*, they just a attachment -- a part of this *ComplexNote*.
 
-Finally, if any directory contain more than one file which *Main Filename* is `index`, this directory not a *Complex Note*, just a *Noise*. See the definition of *Noise*.
+Finally, if any directory contain more than one file which *Main Filename* is `index`, this directory not a *ComplexNote*, just a *Noise*. See the definition of *Noise*.
 
 
 
@@ -161,10 +159,6 @@ Finally, if any directory contain more than one file which *Main Filename* is `i
 Every filesystem entries in the same directory should following the ASCII encoding's filename string ordering as their order. In ordering situation, all characters after the first non-ASCII character will be simple ignored.
 
 If two filename has the same ASCII string order, the ordering among them are undefined.
-
-Program can using more methods to generate or tweak the ordering. This protocol only defined the manual order assigned by a *Lolinote Repository* maintainer.
-
-Here is a example:
 
 ```
 lolinote-root-folder/
@@ -180,7 +174,7 @@ lolinote-root-folder/
     car.txt
 ```
 
-In the above example, `lolinote-root-folder` has 4 entries, the manual ordering should be:
+In above example, `lolinote-root-folder` has 4 entries, the manual ordering should be:
 
 ```
 .lolinote/
@@ -192,31 +186,10 @@ diary/
 The `diary` directory has 4 entries, the manual ordering is:
 
 ```
-2018-01-12-關於新書.txt     # only consider "2018-01-12-"       "-" == 0x2D in ASCII
-2018-01-12.txt              # consider      "2018-01-12.txt"    "." == 0x2E in ASCII
+2018-01-12-關於新書.txt     # "2018-01-12-"    -> "-" == 0x2D in ASCII
+2018-01-12.txt              # "2018-01-12.txt" -> "." == 0x2E in ASCII
 2018-01-13/
 2018-01-25.md
 ```
 
-
-
-## Repository Configuration Directory
-
-The *Repository Configuration Directory* (`.lolinote/`) can be empty, or used to store any program related data. Those program related data should only be saved under a sub-directory named with the "program name". For example:
-
-```
-lolinote-root-folder/
-    .lolinote/
-        lolinote-data-exportor/     # program 1
-            config.ini
-            cache.json
-        static-website-builder/     # program 2
-            conf.yaml
-            build/
-                index.html
-                style.css
-        lolisearch/                 # program 3
-            reverse-index.json
-```
-
-This specification wan't define what the "program name" meaning. But it should be human readable and can easily to understand what's the related program.
+Btw, external program may using extra methods to generate or tweak ordering. This section only defined the "manual ordering" assigned by a *Repository* maintainer.
