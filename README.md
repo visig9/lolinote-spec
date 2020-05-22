@@ -1,3 +1,5 @@
+**Unfortunately, due to some unresolvable problems blocking the road, this project stop developing.**
+
 # Lolinote Specification
 
 The *Lolinote* is a filesystem-based note-taking data structure. Its philosophy was aimed to extremely simple and intuitive, and let all of the daily usages can be done by human's hands and without dedicated program reasonably. In the same time, still allow external programs to enhance its usability.
